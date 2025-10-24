@@ -1,27 +1,91 @@
-# App
+# Angular Property Gallery
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.0.6.
+Responsive Angular 14 SPA that showcases real-estate listings backed by a reusable data service. The UI pairs Angular component architecture with Bootstrap 5 styling and Font Awesome icons to present a polished property catalogue fed by JSON assets.
 
-## Development server
+## Table of Contents
+- [Overview](#overview)
+- [Key Features](#key-features)
+- [Architecture](#architecture)
+- [Project Structure](#project-structure)
+- [Prerequisites](#prerequisites)
+- [Getting Started](#getting-started)
+- [Available Scripts](#available-scripts)
+- [Configuration](#configuration)
+- [Testing & Quality](#testing--quality)
+- [Extensibility Ideas](#extensibility-ideas)
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## Overview
+- The landing page renders a Bootstrap navigation bar and a responsive grid of property cards.
+- Property data is pulled through an Angular service that consumes `HttpClient` and serves JSON from `src/data/properties.json` (bundled via the CLI assets pipeline).
+- Each card presents a property’s name, type, price, and action buttons with Font Awesome icons.
 
-## Code scaffolding
+## Key Features
+- **Componentised layout** – `NavBarComponent`, `PropertyListComponent`, and `PropertyCardComponent` keep concerns isolated and reusable.
+- **Shared data service** – `HousingService` centralises API interaction and can be switched from local JSON to a remote endpoint without touching the components.
+- **Asset-driven data** – Angular CLI asset configuration exposes the `/data` directory at runtime, simplifying mock data management.
+- **Bootstrap integration** – Global styling imports `bootstrap.min.css`, giving responsive layout primitives out of the box.
+- **Iconography** – Font Awesome kit (loaded in `index.html`) powers the action buttons on property cards.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Architecture
+| Layer | Description |
+| --- | --- |
+| `AppModule` | Wires BrowserModule, HttpClientModule, and declares UI components. |
+| `NavBarComponent` | Fixed-top Bootstrap navigation shell. |
+| `PropertyListComponent` | Fetches property data on init and renders each entry. |
+| `PropertyCardComponent` | Presentational card showing property metadata and action buttons. |
+| `HousingService` | Injects `HttpClient`, exposes `getAllProperties()` returning an Observable, currently pointing to `/data/properties.json`. |
 
-## Build
+## Project Structure
+```
+src/
+  app/
+    app.component.*          # Shell and layout container
+    nav-bar/                 # Navigation component
+    property/
+      property-list/         # Fetch + render list
+      property-card/         # Individual card UI
+    service/housing.service.ts
+  assets/                    # Images, shared assets
+  data/properties.json       # Local mock data served via CLI assets
+  environments/              # Angular environment configs
+  styles.css                 # Custom global styles (Bootstrap imported via angular.json)
+```
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+## Prerequisites
+- Node.js ≥ 16 and npm ≥ 8.
+- Angular CLI 14 (`npm install -g @angular/cli@14`) if you prefer using the global `ng` command.
 
-## Running unit tests
+## Getting Started
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Start the development server:
+   ```bash
+   npm start
+   ```
+   then open `http://localhost:4200`.
+3. Edit files under `src/app` and the browser will live-reload with your changes.
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+## Available Scripts
+- `npm start` – run `ng serve` in development mode with live reload.
+- `npm run build` – produce an optimised production build in `dist/app`.
+- `npm run watch` – rebuild on file changes using the development configuration.
+- `npm test` – execute Karma + Jasmine unit tests (headless Chrome by default).
 
-## Running end-to-end tests
+## Configuration
+- **Data source**: `HousingService` currently requests `/data/properties.json`. To plug into a remote API, replace the URL with your endpoint or read it from an environment file (e.g. `environment.ts`) and ensure CORS is enabled.
+- **Assets**: `angular.json` includes both `src/assets` and `src/data`; any JSON/photos dropped there are bundled by the CLI and accessible via `/assets/...` or `/data/...`.
+- **Icons**: Font Awesome kit is referenced in `src/index.html`. Replace the kit URL with your own if necessary.
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+## Testing & Quality
+- Unit tests live next to their components (for example `app.component.spec.ts`). Run them with `npm test`.
+- Jasmine/Karma configuration resides in `karma.conf.js` and `tsconfig.spec.json`. Enable code coverage by setting `codeCoverage` to `true` or using the `--code-coverage` flag (`ng test --code-coverage`).
+- Linting is not configured yet. Consider adding `@angular-eslint` for consistent style enforcement.
 
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+## Extensibility Ideas
+- Replace the local JSON feed with a backend API and add CRUD flows for property management.
+- Implement routing to show individual property detail pages (`[routerLink]` + `ActivatedRoute`).
+- Add reactive forms for filtering or submitting new properties.
+- Capture HTTP errors in `PropertyListComponent` and surface user-friendly notifications.
+- Expand test coverage to include `HousingService` and component interaction tests with Angular’s TestBed utilities.
